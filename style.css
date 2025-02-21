@@ -1,0 +1,18 @@
+.canvas{
+    background-color: gray;
+    border: black 10px solid;
+}
+
+.button{
+        display : block;
+}
+.body{
+    background: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    margin-top: 10%;
+}
+.h1{
+    font-size: 50px;
+}
