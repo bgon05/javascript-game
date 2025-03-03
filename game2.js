@@ -5,31 +5,33 @@ var ctx = canvas.getContext("2d");
 var ballRadius = 10;
 var x = canvas.width/2;
 var y = canvas.height-30;
-var dx = 2;
-var dy = -2;
+var dx = 4;
+var dy = -4;
 //paddle
 var paddleHeight = 10;
-var paddleWidth = 75;
+var paddleWidth = 100;
 var paddleX = (canvas.width-paddleWidth)/2;
 //keys
 var rightPressed = false;
 var leftPressed = false;
 //bricks
 var brickRowCount = 5;
-var brickColumnCount = 3;
+var brickColumnCount = 5;
 var brickWidth = 75;
 var brickHeight = 20;
-var brickPadding = 10;
-var brickOffsetTop = 30;
+var brickPadding = 3;
+var brickOffsetTop = 50;
 var brickOffsetLeft = 30;
 //score
 var score = 0;
 var lives = 3;
+//new ball
+var newBallActive = false;
+var newBallX = canvas.width / 2;
+var newBallY = canvas.height - 30;
+var newBallDx = 4;
+var newBallDy = -4;
 
-//sound
-var sound = new Howl({
-    src: ['sound.mp3']
-});
 
 //loop through rows and columns to create bricks
     var bricks = [];
@@ -43,6 +45,7 @@ var sound = new Howl({
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
+
 //key handlers
     function keyDownHandler(e) {
         if(e.code  == "ArrowRight") {
@@ -61,6 +64,27 @@ var sound = new Howl({
             leftPressed = false;
         }
     }
+
+    //key handlers
+function keyDownHandler(e) {
+    if(e.code == "ArrowRight" || e.code == "KeyD") {
+        rightPressed = true;
+    }
+    else if(e.code == "ArrowLeft" || e.code == "KeyA") {
+        leftPressed = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if(e.code == "ArrowRight" || e.code == "KeyD") {
+        rightPressed = false;
+    }
+    else if(e.code == "ArrowLeft" || e.code == "KeyA") {
+        leftPressed = false;
+    }
+}
+
+
 //mouse handler
     function mouseMoveHandler(e) {
         var relativeX = e.clientX - canvas.offsetLeft;
@@ -68,6 +92,8 @@ var sound = new Howl({
             paddleX = relativeX - paddleWidth/2;
         }
     }
+
+
 //collision detection
     function collisionDetection() {
         for(var c=0; c<brickColumnCount; c++) {
@@ -76,6 +102,15 @@ var sound = new Howl({
                 if(b.status == 1) {
                     if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
                         dy = -dy;
+                        b.status = 0;
+                        score++;
+                        if(score == brickRowCount*brickColumnCount) {
+                            alert("YOU WIN, CONGRATS!");
+                            document.location.reload();
+                        }
+                    }
+                    if(newBallActive && newBallX > b.x && newBallX < b.x+brickWidth && newBallY > b.y && newBallY < b.y+brickHeight) {
+                        newBallDy = -newBallDy;
                         b.status = 0;
                         score++;
                         if(score == brickRowCount*brickColumnCount) {
@@ -94,6 +129,14 @@ var sound = new Howl({
         ctx.fillStyle = "#ffffff";
         ctx.fill();
         ctx.closePath();
+
+        if (newBallActive) {
+            ctx.beginPath();
+            ctx.arc(newBallX, newBallY, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#5D382F"; // diff color for the new ball
+            ctx.fill();
+            ctx.closePath();
+        }
     }
 //draw paddle
     function drawPaddle() {
@@ -103,6 +146,8 @@ var sound = new Howl({
         ctx.fill();
         ctx.closePath();
     }
+
+
 
 //draw bricks
     function drawBricks() {
@@ -164,13 +209,49 @@ var sound = new Howl({
                 else {
                     x = canvas.width/2;
                     y = canvas.height-30;
-                    dx = 2;
-                    dy = -2;
+                    dx = 4;
+                    dy = -4;
+
+
                     paddleX = (canvas.width-paddleWidth)/2;
                 }
             }
+        }   
+
+        if (newBallActive) {
+            if (newBallX + newBallDx > canvas.width - ballRadius || newBallX + newBallDx < ballRadius) {
+                newBallDx = -newBallDx;
+            }
+            if (newBallY + newBallDy < ballRadius) {
+                newBallDy = -newBallDy;
+            } else if (newBallY + newBallDy > canvas.height - ballRadius) {
+                if (newBallX > paddleX && newBallX < paddleX + paddleWidth) {
+                    newBallDy = -newBallDy;
+                } else {
+                    // Reset the new ball's position without subtracting a life
+                    newBallX = canvas.width / 2;
+                    newBallY = canvas.height - 30;
+                    newBallDx = 4;
+                    newBallDy = -4;
+                    newBallActive = false
+                }
+            }
+        
+            newBallX += newBallDx;
+            newBallY += newBallDy;
         }
 
+        if (score > 0) {
+            dx = dx * 1.0007;
+            dy = dy * 1.0007;
+        }
+
+        
+        if (score > 10 && !newBallActive) {
+            newBallActive = true;
+        }
+
+                
         if(rightPressed && paddleX < canvas.width-paddleWidth) {
             paddleX += 6;
         }
