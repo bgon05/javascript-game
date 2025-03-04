@@ -9,7 +9,7 @@ var dx = 3;
 var dy = -3;
 //paddle
 var paddleHeight = 10;
-var paddleWidth = 150;
+var paddleWidth = 200;
 var paddleX = (canvas.width - paddleWidth) / 2;
 //keys
 var rightPressed = false;
@@ -80,8 +80,9 @@ function collisionDetection() {
           b.status = 0;
           score++;
           if (score == brickRowCount * brickColumnCount) {
-            alert("YOU WIN, CONGRATS!");
-            document.location.reload();
+            initializeBricks();
+            dx = dx * 1.001;
+            dy = dy * 1.001;
           }
         }
         if (newBallActive && newBallX > b.x && newBallX < b.x + brickWidth && newBallY > b.y && newBallY < b.y + brickHeight) {
@@ -89,8 +90,9 @@ function collisionDetection() {
           b.status = 0;
           score++;
           if (score == brickRowCount * brickColumnCount) {
-            alert("YOU WIN, CONGRATS!");
-            document.location.reload();
+            initializeBricks();
+            dx = dx * 1.001;
+            dy = dy * 1.001;
           }
         }
       }
@@ -141,9 +143,16 @@ function drawBricks() {
 }
 
 function drawScore() {
-  ctx.font = "16px Arial";
-  ctx.fillStyle = "#000000";
-  ctx.fillText("Score: " + score, 8, 20);
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Score: " + score, 8, 20);
+}
+
+function newLevel() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Level 2" + 50, 20);
+    return false; 
 }
 
 function drawLives() {
@@ -151,6 +160,19 @@ function drawLives() {
   ctx.fillStyle = "#000000";
   ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
 }
+
+// Function to initialize the bricks
+function initializeBricks() {
+    for (var c = 0; c < brickColumnCount; c++) {
+      bricks[c] = [];
+      for (var r = 0; r < brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0, status: 1 };
+      }
+    }
+  }
+  
+  // Initialize bricks at the start of the game
+initializeBricks();
 
 const frameRate = 120;
 const frameTime = 1000 / frameRate;
@@ -217,17 +239,20 @@ function draw(currentTime) {
     newBallY += newBallDy * (deltaTime / frameTime);
   }
   
-  
+  if (score > 0) {
+        dx = dx * 1.0003;
+        dy = dy * 1.0003;
+    }
 
-    if (score === 20 && !newBallActive) {
+    if (score === 30 && !newBallActive) {
         newBallActive = true;
     } 
 
-    if (score === 40) {
+    if (score === 50) {
         newBallActive = false;
     }
 
-    if (score === 60) {
+    if (score === 70) {
         newBallActive = true;
     }
 
@@ -235,18 +260,18 @@ function draw(currentTime) {
         newBallActive = false;
     }
 
+    if (score === 85) {
+        newBallActive = true;
+    }
+
     if (score === 90) {
-        dx = dx * 1.01;
-        dy = dy * 1.01;
+        dx = dx * 1.0001;
+        dy = dy * 1.0001;
     }
 
-    if (score > 0) {
-        dx = dx * 1.0003;
-        dy = dy * 1.0003;
+    if (score === 105) {
+        newLevel = true;
     }
-
-
- 
 
   if (rightPressed && paddleX < canvas.width - paddleWidth) {
     paddleX += 8 * (deltaTime / frameTime);
