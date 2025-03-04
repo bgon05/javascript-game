@@ -149,9 +149,9 @@ function drawScore() {
 }
 
 function newLevel() {
-    ctx.font = "16px Arial";
+    ctx.font = "25px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("Level 2" + 50, 20);
+    ctx.fillText("Level 2", canvas.width - 650, 25);
     return false; 
 }
 
@@ -195,6 +195,9 @@ function draw(currentTime) {
   drawPaddle();
   drawScore();
   drawLives();
+    if (score > 105) {
+        newLevel();
+    }
   collisionDetection();
 
   if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -269,9 +272,6 @@ function draw(currentTime) {
         dy = dy * 1.0001;
     }
 
-    if (score === 105) {
-        newLevel = true;
-    }
 
   if (rightPressed && paddleX < canvas.width - paddleWidth) {
     paddleX += 8 * (deltaTime / frameTime);
