@@ -9,19 +9,19 @@ var dx = 3;
 var dy = -3;
 //paddle
 var paddleHeight = 10;
-var paddleWidth = 100;
+var paddleWidth = 150;
 var paddleX = (canvas.width - paddleWidth) / 2;
 //keys
 var rightPressed = false;
 var leftPressed = false;
 //bricks
-var brickRowCount = 8;
-var brickColumnCount = 5;
-var brickWidth = 50;
+var brickRowCount = 15;
+var brickColumnCount = 7;
+var brickWidth = 60;
 var brickHeight = 15;
-var brickPadding = 3;
+var brickPadding = 20;
 var brickOffsetTop = 45;
-var brickOffsetLeft = 28;
+var brickOffsetLeft = 30;
 //score
 var score = 0;
 var lives = 3;
@@ -207,42 +207,51 @@ function draw(currentTime) {
     } else if (newBallY + newBallDy > canvas.height - ballRadius) {
       if (newBallX > paddleX && newBallX < paddleX + paddleWidth) {
         newBallDy = -newBallDy;
-      } else {
-        // Reset the new ball's position without subtracting a life
-        newBallX = canvas.width / 2;
-        newBallY = canvas.height - 30;
-        newBallDx = 3;
-        newBallDy = -3;
-        newBallActive = false;
+        if (newBallY + newBallDy > canvas.height - ballRadius) {
+            newBallActive = false;
+        }
       }
     }
 
     newBallX += newBallDx * (deltaTime / frameTime);
     newBallY += newBallDy * (deltaTime / frameTime);
   }
+  
+  
 
-  if (score === 10 && !newBallActive) {
-    newBallActive = true;
-  } 
+    if (score === 20 && !newBallActive) {
+        newBallActive = true;
+    } 
 
-  if (score === 20) {
-    newBallActive = false;
-  }
-
-  if (score === 30) {
-    newBallActive = true;
+    if (score === 40) {
+        newBallActive = false;
     }
 
-  if (score > 0) {
-    dx = dx * 1.0003;
-    dy = dy * 1.0003;
-  }
+    if (score === 60) {
+        newBallActive = true;
+    }
+
+    if (score === 80) {
+        newBallActive = false;
+    }
+
+    if (score === 90) {
+        dx = dx * 1.01;
+        dy = dy * 1.01;
+    }
+
+    if (score > 0) {
+        dx = dx * 1.0003;
+        dy = dy * 1.0003;
+    }
+
+
  
 
   if (rightPressed && paddleX < canvas.width - paddleWidth) {
-    paddleX += 6 * (deltaTime / frameTime);
+    paddleX += 8 * (deltaTime / frameTime);
   } else if (leftPressed && paddleX > 0) {
-    paddleX -= 6 * (deltaTime / frameTime);
+    paddleX -= 8 * (deltaTime / frameTime);
   }
 
   x += dx * (deltaTime / frameTime);
